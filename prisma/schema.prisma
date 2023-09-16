@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id        String    @id @default(cuid()) @map("_id")
+  userId    String    
+  name      String?
+  email     String?   @unique
+  imageUrl  String?
+  games     Game[]
+  members   Member[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member {
+  id                String      @id @default(cuid()) @map("_id")
+  type              MemberRole  @default(GUEST)
+  provider          String
+  providerAccountId String
+  profileId         String
+  profile           Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([profileId])
+  @@index([profileId, provider, providerAccountId])
+}
+
+enum GameType {
+  mcq
+  open_ended
+}
+
+model Game {
+  id          String     @id @default(cuid()) @map("_id")
+  questions   Question[]
+  timeStarted DateTime
+  topic       String
+  timeEnded   DateTime?
+  gameType    GameType
+  profileId   String
+  profile     Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model topic_count {
+  id      String  @id @default(cuid()) @map("_id")
+  topic   String  @unique
+  count   Int
+}
+
+model Question {
+  id                String       @id @default(cuid()) @map("_id")
+  question          String
+  answer            String
+  gameId            String       @map("game_id")
+  options           Option[]
+  percentageCorrect Float?       @map("percentage_correct")
+  isCorrect         Boolean?     @map("is_correct")
+  questionType      GameType
+  userAnswer        String?      @map("user_answer")
+  game              Game         @relation(fields: [gameId], references: [id])
+
+  @@index([gameId])
+}
+
+model Option {
+  id        String   @id @default(cuid()) @map("_id")
+  value     String
+  question  Question @relation(fields: [questionId], references: [id])
+  questionId String  @map("question_id")
+
+  @@index([questionId])
+}
+
+model Experience {
+  id          String    @id @default(cuid()) @map("_id")
+  title       String
+  location    String
+  description String
+  icon        String
+  date        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Project {
+  id          String    @id @default(cuid()) @map("_id")
+  title       String
+  description String
+  tags        String[]
+  imageUrl    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
