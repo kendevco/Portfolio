@@ -6,6 +6,10 @@
 /.pnp
 .pnp.js
 
+web.config
+server.js
+source.js
+
 # testing
 /coverage
 
