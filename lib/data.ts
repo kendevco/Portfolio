@@ -4,7 +4,7 @@ import { FaAnchor, FaDatabase, FaDotCircle, FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import discordantImg from "@/public/images/discordant.png";
 import smartchatbotImg from "@/public/images/smart-chatbot-ui.png";
-import nextlmsImg from "@/public/images/nextlms.png";
+import nextlmsImg from "@/public/images/NextLMS.png";
 
 export const links = [
   {
