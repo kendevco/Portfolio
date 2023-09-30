@@ -4,7 +4,7 @@ import { FaAnchor, FaDatabase, FaDotCircle, FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import discordantImg from "@/public/images/discordant.png";
 import smartchatbotImg from "@/public/images/smart-chatbot-ui.png";
-import quizmifyImg from "@/public/images/quizmify.png";
+import nextlmsImg from "@/public/images/nextlms.png";
 
 export const links = [
   {
@@ -158,13 +158,16 @@ export const projectsData = [
     href: "https://kendev-chatbot-ui.vercel.app/",
   },
   {
-    title: "QuizmiFy - AI Powered Quiz App",
+    title: "Next LMS",
     description:
-      "Quizmify App integrated into this for demonstration purposes.",
+      "Next LMS is a powerful and flexible learning management system with user management, dark mode, error handling for video upload, and a variety of other features. It is built with React, Next.js, MongoDB, Tailwind, and Prisma.",
     tags: ["React", "Next.js", "MongoDB", "Tailwind", "Prisma"],
-    imageUrl: quizmifyImg,
-    href: "/quizmify",
+    imageUrl: nextlmsImg,
+    href: "https://lms.kendev.co",
   },
+
+
+
 ] as const;
 
 export const skillsData = [
