@@ -3,7 +3,9 @@ import { CgWorkAlt } from "react-icons/cg";
 import { FaAnchor, FaDatabase, FaDotCircle, FaReact } from "react-icons/fa";
 import { LuGraduationCap } from "react-icons/lu";
 import discordantImg from "@/public/images/discordant.png";
-import smartchatbotImg from "@/public/images/smart-chatbot-ui.png";
+import jotionImg from "@/public/images/jotion.png";
+import commerceImg from "@/public/images/commerce.png";
+
 import nextlmsImg from "@/public/images/NextLMS.png";
 
 export const links = [
@@ -147,76 +149,96 @@ export const projectsData = [
       "Full featured Discord clone with 1-1 voice and video calling, Clerk authentication, Upload Thing file repository, and more.",
     tags: ["React", "TypeScript", "Next.js", "Tailwind", "Redux"],
     imageUrl: discordantImg,
-    href: "https://discordant.vercel.app/",
+    href: "https://discordant.kendev.co/",
   },
-  {
-    title: "Chat GPT Clone + More",
-    description:
-      "A personal clone of Chat GPT plus enhancements.",
-    tags: ["React", "Next.js", "Mongo", "Tailwind", "Prisma"],
-    imageUrl: smartchatbotImg,
-    href: "https://kendev-chatbot-ui.vercel.app/",
-  },
+
   {
     title: "Next LMS",
     description:
-      "Next LMS is a powerful and flexible learning management system with user management, dark mode, error handling for video upload, and a variety of other features. It is built with React, Next.js, MongoDB, Tailwind, and Prisma.",
+      "Next LMS is a powerful and flexible learning management system with user management, dark mode, error handling for video upload, and a variety of other features by Code with Antonio.",
     tags: ["React", "Next.js", "MongoDB", "Tailwind", "Prisma"],
     imageUrl: nextlmsImg,
     href: "https://lms.kendev.co",
   },
-
-
+  {
+    title: "Notion Clone",
+    description:
+      "A personal clone of Notion, plus enhancements for personal use by Code with Antonio.",
+    tags: ["React", "Next.js", "Mongo", "Tailwind", "Prisma"],
+    imageUrl: jotionImg,
+    href: "https://notes.kendev.co/",
+  },
+  {
+    title: "Next Commerce",
+    description:
+      "A fullstack commerce solution with separate admin dashboard by Code with Antonio.",
+    tags: ["React", "Next.js", "Mongo", "Tailwind", "Prisma"],
+    imageUrl: commerceImg,
+    href: "https://next-commerce-store.kendev.co/",
+  },
 
 ] as const;
 
 export const skillsData = [
+  // Web Development
   "HTML",
   "CSS",
   "JavaScript",
   "TypeScript",
   "React",
-  "Next.js",
-  "Node.js",
-  "Git",
-  "Tailwind",
-  "Prisma",
-  "MongoDB",
-  "Redux",
-  "GraphQL",
-  "Apollo",
-  "Express",
-  "PostgreSQL",
-  "Python",
-  "Django",
-  "Framer Motion",
-  "Databases",
-  "Windows Server",
-  "HTML",
-  "ASP.NET MVC",
-  "ASP.NET",
-  "JavaScript",
-  "SQL",
   "React.js",
-  "Web Design",
-  "Scrum",
-  "Responsive Web Design",
-  "Documentation",
-  "Debugging",
-  "Cascading Style Sheets (CSS)",
-  "DotNetNuke (DNN)",
+  "Node.js",
   "Next.js",
   "Vue.js",
-  "Dynatrace",
+  "Web Design",
+  "Responsive Web Design",
+  "Cascading Style Sheets (CSS)",
+
+  // Backend Development
+  "ASP.NET",
+  "ASP.NET MVC",
+  "Python",
+  "Django",
+  "SQL",
+  "PL/SQL",
+  "Prisma",
+  "App.Write",
+  "GraphQL",
+  "PostgreSQL",
+  "MongoDB",
+  "Databases",
+  "ADO.NET",
+
+  // DevOps
+  "Git",
+  "Windows Server",
+  "Windows Server Administration",
   "Internet Information Services (IIS)",
   "Microsoft SQL Server",
+
+  // .NET Framework
+  "C#",
   ".NET Framework",
-  "Microsoft Visual Studio.NET 2003",
-  "VB 6.0",
-  "ADO.NET",
-  "Microsoft SQL Server 2000",
-  "Microsoft Visual Source Safe",
+  "Microsoft Visual Studio.NET",
+  "Visual Studio Code",
+  "Visual Basic",
+  "DotNetNuke (DNN)",
+
+  // Project Management
+  "Scrum",
   "Microsoft Project",
   "Visio",
-  "Windows Server 2003 & IIS 6.0",
+  "Documentation",
+
+  // Debugging and Performance
+  "Debugging",
+  "Dynatrace",
+
+  // UI/UX
+  "Framer Motion",
+  "Tailwind",
+  "Redux",
+
+  // Version Control
+  "Microsoft Visual Source Safe",
 ] as const;
