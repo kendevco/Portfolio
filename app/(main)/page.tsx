@@ -10,8 +10,8 @@ import Skills from "@/components/skills";
 export default function Home() {
   return (
     <main className="flex flex-col items-center px-4">
-      <Intro />
       <Microphone />
+      <Intro />
       <About />
       <Projects />
       <Skills />
