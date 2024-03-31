@@ -9,7 +9,6 @@ import { HiDownload } from "react-icons/hi";
 import { FaGithubSquare } from "react-icons/fa";
 import { useSectionInView } from "@/lib/hooks";
 import { useActiveSectionContext } from "@/context/active-section-context";
-import Microphone from "./microphone";
 
 export default function Intro() {
   const { ref } = useSectionInView("Home", 0.5);
@@ -63,7 +62,7 @@ export default function Intro() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <span><Microphone /></span>
+
         
         <span className="font-bold">Hello, I'm Ken.</span> I'm a{" "}
         <span className="font-bold">full-stack developer</span> with{" "}
