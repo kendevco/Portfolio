@@ -72,7 +72,7 @@ export default function Microphone() {
     <>
       {isListening ? (
         <div onClick={stopVapi} >
-          <Siriwave theme="ios9" autostart={isListening} />
+          <Siriwave theme="ios9" autostart={isListening} width={400} height={150} />
         </div>
       ) : (
         <button
