@@ -21,13 +21,13 @@ export default function Microphone() {
       });
       setIsListening(true);
 
-      vapiInstance.on('speech-start', () => console.log('Speech has started'));
-      vapiInstance.on('speech-end', () => console.log('Speech has ended'));
-      vapiInstance.on('call-start', () => console.log('Call has started'));
-      vapiInstance.on('call-end', () => console.log('Call has stopped'));
-      vapiInstance.on('volume-level', (volume) => console.log(`Assistant volume level: ${volume}`));
-      vapiInstance.on('message', (message) => console.log(message));
-      vapiInstance.on('error', (e) => console.error(e));
+      // vapiInstance.on('speech-start', () => console.log('Speech has started'));
+      // vapiInstance.on('speech-end', () => console.log('Speech has ended'));
+      // vapiInstance.on('call-start', () => console.log('Call has started'));
+      // vapiInstance.on('call-end', () => console.log('Call has stopped'));
+      // vapiInstance.on('volume-level', (volume) => console.log(`Assistant volume level: ${volume}`));
+      // vapiInstance.on('message', (message) => console.log(message));
+      // vapiInstance.on('error', (e) => console.error(e));
       
       setVapi(vapiInstance);
       toast.success("Listening...", {
@@ -69,7 +69,7 @@ export default function Microphone() {
   }, [vapi]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <>
       {isListening ? (
         <div className="w-4/5" onClick={stopVapi}>
           <Siriwave theme="ios9" autostart={isListening} />
@@ -82,6 +82,6 @@ export default function Microphone() {
           Start new conversation
         </button>
       )}
-    </div>
+    </>
   );
 }
