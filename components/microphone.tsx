@@ -12,7 +12,10 @@ export default function Microphone() {
   const startVapi = useCallback(async () => {
     try {
       
-      const vapiInstance = new Vapi(process.env.VAPI_AGENT_ID || 'e9675026-b11b-4615-b4f0-8fd1fe5a87a6');
+      const vapiInstance = new Vapi(process.env.VAPI_PUBLIC_KEY || 'b42e5bf6-ca87-4564-9c03-7beef93c25e3');
+
+      vapiInstance.start(process.env.VAPI_AGENT_ID || 'e9675026-b11b-4615-b4f0-8fd1fe5a87a6');
+
       vapiInstance.on('error', (error: any) => {
         toast.error(`Error: ${(error as Error).message}`);
       });
@@ -26,7 +29,6 @@ export default function Microphone() {
       vapiInstance.on('message', (message) => console.log(message));
       vapiInstance.on('error', (e) => console.error(e));
       
-
       setVapi(vapiInstance);
       toast.success("Listening...", {
         duration: 3000, // Duration in ms
@@ -37,6 +39,7 @@ export default function Microphone() {
   }, []);
 
   useEffect(() => {
+
     startVapi(); // Start Vapi when the component mounts
   }, [startVapi]);
 
@@ -49,6 +52,7 @@ export default function Microphone() {
         vapi.stop();
         setIsListening(false);
         setVapi(null);
+        toast.success("Stopped listening");
       }
     }
   }, [vapi]);
@@ -59,6 +63,7 @@ export default function Microphone() {
       if (vapi) {
         vapi.stop();
         setIsListening(false); // Update the isListening state
+        toast.success("VAPI Stopped listening");
       }
     };
   }, [vapi]);
