@@ -1,15 +1,17 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
+  // Make all routes public since admin functionality is not implemented yet
   publicRoutes: [
-    "/",
-    "/about",
-    "/contact",
-    "/projects",
-    "/api/uploadthing",
+    "/(.*)",
+  ],
+  // Ignore static files and Next.js internals
+  ignoredRoutes: [
+    "/((?!api|trpc))(_next.*|.+\\.[\w]+$)",
+    "/favicon.ico",
   ]
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };
