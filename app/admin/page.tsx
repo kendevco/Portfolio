@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Users, FolderOpen, Award, MessageSquare } from "lucide-react";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 
 export default async function AdminDashboard() {
   // Get stats from database
   const [profileCount, experienceCount, projectCount] = await Promise.all([
-    prisma.profile.count(),
-    prisma.experience.count(),
-    prisma.project.count(),
+    db.profile.count(),
+    db.experience.count(),
+    db.project.count(),
   ]);
 
   const stats = [

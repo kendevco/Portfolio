@@ -55,10 +55,10 @@ export const sendEmail = async (formData: FormData) => {
     `;
 
     data = await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>",
-      to: process.env.EMAIL_ADDRESS_FROM ?? "",
+      from: "Portfolio Contact <noreply@kendev.co>",
+      to: process.env.EMAIL_ADDRESS_TO ?? "",
       subject: "New Portfolio Contact Form Message",
-      reply_to: senderEmail as string,
+      replyTo: senderEmail as string,
       html: htmlContent,
     });
   } catch (error: unknown) {

@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next dev",
+    "dev": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next dev --experimental-https",
     "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.2.1",
+    "@daily-co/daily-js": "^0.80.0",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "^6.8.2",
     "@radix-ui/react-accordion": "^1.1.2",
@@ -32,7 +33,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@vapi-ai/web": "^1.0.267",
+    "@vapi-ai/web": "^2.3.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",

@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "instanceId": "ed44d31f-4e3a-4f70-bf31-2a30b7fc7aab"
+  },
+  "id": "workflow_vapi_processor",
+  "name": "VAPI AI Assistant Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vapi-conversation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "VAPI Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "vapi-conversation-hook",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 1000
+        },
+        "requestOptions": {},
+        "text": "You are a conversation analyzer for KenDev.Co. Analyze the VAPI conversation transcript and determine what action should be taken.\n\nActions available:\n1. SCHEDULE - if user wants to schedule a consultation/appointment\n2. EMAIL - if user wants to be contacted via email  \n3. FOLLOWUP - if user needs a follow-up call\n4. INFO - if user just needed information\n5. SUPPORT - if user needs technical support\n\nExtract user details if mentioned (name, email, phone, preferred times).\n\nRespond ONLY with valid JSON format:\n```json\n{\n  \"action\": \"SCHEDULE|EMAIL|FOLLOWUP|INFO|SUPPORT\",\n  \"summary\": \"Brief summary of the conversation\", \n  \"userDetails\": {\n    \"name\": \"extracted name or null\",\n    \"email\": \"extracted email or null\",\n    \"phone\": \"extracted phone or null\",\n    \"preferredTime\": \"extracted preferred time or null\"\n  },\n  \"priority\": \"HIGH|MEDIUM|LOW\",\n  \"nextSteps\": \"What should happen next\"\n}\n```\n\nConversation Transcript:\n{{ $json.transcript || $json.conversation || $json.body.transcript || JSON.stringify($json) }}\n\nCall Details:\n- Duration: {{ $json.duration || 'Unknown' }}\n- Status: {{ $json.status || 'Unknown' }}\n- Timestamp: {{ $json.timestamp || new Date().toISOString() }}"
+      },
+      "id": "b2c3d4e5-f6g7-8901-bcde-f23456789012",
+      "name": "Analyze Conversation",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "93xrPD7UUL9tV6EG",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the AI response and clean it up\nlet response = '';\n\n// Try different response formats based on n8n version\nif (items[0].json.text) {\n  response = items[0].json.text;\n} else if (items[0].json.choices && items[0].json.choices[0]) {\n  response = items[0].json.choices[0].message?.content || items[0].json.choices[0].text || '';\n} else if (items[0].json.message) {\n  response = items[0].json.message.content || items[0].json.message;\n} else {\n  response = JSON.stringify(items[0].json);\n}\n\n// Extract JSON from response if it's wrapped in markdown\nconst jsonMatch = response.match(/```json\\s*([\\s\\S]*?)\\s*```/) || response.match(/{[\\s\\S]*}/);\nif (jsonMatch) {\n  response = jsonMatch[1] || jsonMatch[0];\n}\n\ntry {\n  const analysis = JSON.parse(response);\n  return [{ json: analysis }];\n} catch (error) {\n  // Fallback if JSON parsing fails\n  console.log('Parse error:', error, 'Raw response:', response);\n  return [{\n    json: {\n      action: 'INFO',\n      summary: 'Unable to parse conversation analysis. Raw response: ' + response.substring(0, 200),\n      userDetails: {\n        name: null,\n        email: null,\n        phone: null,\n        preferredTime: null\n      },\n      priority: 'LOW',\n      nextSteps: 'Manual review required - check raw response format'\n    }\n  }];\n}"
+      },
+      "id": "c3d4e5f6-g7h8-9012-cdef-345678901234",
+      "name": "Parse Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "schedule-condition",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "SCHEDULE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4e5f6g7-h8i9-0123-defg-456789012345",
+      "name": "Check if Scheduling",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ DateTime.now().plus({days: 1}).toISO() }}",
+        "end": "={{ DateTime.now().plus({days: 1, hours: 1}).toISO() }}",
+        "summary": "KenDev.Co Consultation - {{ $('Parse Analysis').item(0).json.userDetails.name || 'New Client' }}",
+        "description": "🚀 **KenDev.Co Consultation Call**\\n\\n**Scheduled via VAPI AI Assistant**\\n\\n**Conversation Summary:**\\n{{ $('Parse Analysis').item(0).json.summary }}\\n\\n**Client Details:**\\n• Name: {{ $('Parse Analysis').item(0).json.userDetails.name || 'Not provided' }}\\n• Email: {{ $('Parse Analysis').item(0).json.userDetails.email || 'Not provided' }}\\n• Phone: {{ $('Parse Analysis').item(0).json.userDetails.phone || 'Not provided' }}\\n• Preferred Time: {{ $('Parse Analysis').item(0).json.userDetails.preferredTime || 'Not specified' }}\\n\\n**Next Steps:**\\n{{ $('Parse Analysis').item(0).json.nextSteps }}\\n\\n**Priority:** {{ $('Parse Analysis').item(0).json.priority }}\\n\\n---\\n*This appointment was automatically scheduled by the VAPI AI Assistant based on the client's request.*",
+        "location": "Virtual Meeting (Link to be provided)",
+        "options": {
+          "sendNotifications": true
+        }
+      },
+      "id": "e5f6g7h8-i9j0-1234-efgh-567890123456",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 2,
+      "position": [1120, 100],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "google_calendar_credential_id",
+          "name": "Google Calendar OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "email-condition",
+              "leftValue": "={{ $('Parse Analysis').item(0).json.action }}",
+              "rightValue": "EMAIL",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "schedule-condition",  
+              "leftValue": "={{ $('Parse Analysis').item(0).json.action }}",
+              "rightValue": "SCHEDULE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "f6g7h8i9-j0k1-2345-fghi-678901234567",
+      "name": "Check if Email Needed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@kendev.co",
+        "toEmail": "={{ $('Parse Analysis').item(0).json.userDetails.email || 'kenneth.courtney@gmail.com' }}",
+        "subject": "{{ $('Parse Analysis').item(0).json.action === 'SCHEDULE' ? 'Consultation Scheduled - KenDev.Co' : 'Thank you for contacting KenDev.Co' }}",
+        "emailFormat": "html",
+        "message": "<!DOCTYPE html>\\n<html>\\n<head>\\n    <meta charset=\\\"utf-8\\\">\\n    <title>{{ $('Parse Analysis').item(0).json.action === 'SCHEDULE' ? 'Consultation Scheduled' : 'Thank You' }}</title>\\n    <style>\\n        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }\\n        .content { padding: 30px; font-family: Arial, sans-serif; line-height: 1.6; color: #333; }\\n        .highlight { background: #f8f9fa; padding: 20px; border-left: 4px solid #007bff; margin: 20px 0; border-radius: 5px; }\\n        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 14px; color: #666; }\\n    </style>\\n</head>\\n<body style=\\\"margin: 0; padding: 0; background: #f4f4f4;\\\">\\n    <div style=\\\"max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);\\\">\\n        <div class=\\\"header\\\">\\n            <h1 style=\\\"margin: 0; font-size: 28px;\\\">🚀 KenDev.Co</h1>\\n            <p style=\\\"margin: 10px 0 0 0; opacity: 0.9;\\\">Full-Stack Development & AI Solutions</p>\\n        </div>\\n        \\n        <div class=\\\"content\\\">\\n            <h2 style=\\\"color: #333; margin-top: 0;\\\">\\n                {{ $('Parse Analysis').item(0).json.action === 'SCHEDULE' ? 'Your Consultation is Scheduled! 📅' : 'Thank You for Reaching Out! 👋' }}\\n            </h2>\\n            \\n            <p>Hi {{ $('Parse Analysis').item(0).json.userDetails.name || 'there' }},</p>\\n            \\n            {{ $('Parse Analysis').item(0).json.action === 'SCHEDULE' ? \\n               '<p>Great news! I\\'ve received your consultation request and scheduled an initial meeting. You should receive a calendar invitation shortly.</p>' : \\n               '<p>Thank you for contacting us via our AI assistant. I\\'ve received your inquiry and will follow up with you soon.</p>' \\n            }}\\n            \\n            <div class=\\\"highlight\\\">\\n                <h3 style=\\\"margin-top: 0; color: #007bff;\\\">📝 Conversation Summary</h3>\\n                <p style=\\\"margin-bottom: 0;\\\">{{ $('Parse Analysis').item(0).json.summary }}</p>\\n            </div>\\n            \\n            {{ $('Parse Analysis').item(0).json.nextSteps ? \\n               '<div class=\\\"highlight\\\"><h3 style=\\\"margin-top: 0; color: #28a745;\\\">🎯 Next Steps</h3><p style=\\\"margin-bottom: 0;\\\">'+$('Parse Analysis').item(0).json.nextSteps+'</p></div>' : '' \\n            }}\\n            \\n            <p>I specialize in:</p>\\n            <ul>\\n                <li>🌐 Full-Stack Web Development (Next.js, React, Node.js)</li>\\n                <li>🤖 AI Integration & Automation</li>\\n                <li>☁️ Cloud Solutions & DevOps</li>\\n                <li>📱 Mobile App Development</li>\\n                <li>🔗 API Development & Integration</li>\\n            </ul>\\n            \\n            <p>Looking forward to discussing your project!</p>\\n        </div>\\n        \\n        <div class=\\\"footer\\\">\\n            <p style=\\\"margin: 0;\\\"><strong>Kenneth Courtney</strong></p>\\n            <p style=\\\"margin: 5px 0;\\\">Full-Stack Developer & AI Specialist</p>\\n            <p style=\\\"margin: 5px 0;\\\">📧 kenneth.courtney@gmail.com | 🌐 kendev.co</p>\\n            <p style=\\\"margin: 15px 0 0 0; font-size: 12px; opacity: 0.7;\\\">This email was sent in response to your VAPI AI Assistant conversation.</p>\\n        </div>\\n    </div>\\n</body>\\n</html>",
+        "options": {}
+      },
+      "id": "g7h8i9j0-k1l2-3456-ghij-789012345678",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1120, 400],
+      "credentials": {
+        "smtp": {
+          "id": "resend_smtp_credential_id",
+          "name": "Resend SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": "1234567890123456789",
+        "text": "🤖 **VAPI AI Assistant Report** {{ new Date().toLocaleString() }}\\n\\n**Action Required:** `{{ $('Parse Analysis').item(0).json.action }}`\\n**Priority:** {{ $('Parse Analysis').item(0).json.priority === 'HIGH' ? '🔴 HIGH' : $('Parse Analysis').item(0).json.priority === 'MEDIUM' ? '🟡 MEDIUM' : '🟢 LOW' }}\\n\\n**📋 Summary:**\\n{{ $('Parse Analysis').item(0).json.summary }}\\n\\n**👤 User Details:**\\n• **Name:** {{ $('Parse Analysis').item(0).json.userDetails.name || 'Not provided' }}\\n• **Email:** {{ $('Parse Analysis').item(0).json.userDetails.email || 'Not provided' }}\\n• **Phone:** {{ $('Parse Analysis').item(0).json.userDetails.phone || 'Not provided' }}\\n• **Preferred Time:** {{ $('Parse Analysis').item(0).json.userDetails.preferredTime || 'Not specified' }}\\n\\n**🎯 Next Steps:**\\n{{ $('Parse Analysis').item(0).json.nextSteps }}\\n\\n**✅ Actions Taken:**\\n{{ $('Create Calendar Event').item(0) ? '📅 Calendar event created\\n' : '' }}{{ $('Send Email').item(0) ? '📧 Follow-up email sent\\n' : '' }}\\n{{ !$('Create Calendar Event').item(0) && !$('Send Email').item(0) ? '👀 Information request - no actions needed' : '' }}\\n\\n**💬 Raw Data:**\\n```json\\n{{ JSON.stringify($('VAPI Webhook').item(0).json, null, 2) }}\\n```",
+        "options": {}
+      },
+      "id": "h8i9j0k1-l2m3-4567-hijk-890123456789",
+      "name": "Discord System Notification",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [1340, 300],
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "discord_webhook_credential_id",
+          "name": "Discord Webhook"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\\n  \\\"toolCallId\\\": \\\"{{ $('VAPI Webhook').item(0).json.toolCallId || $('VAPI Webhook').item(0).json.tool_call_id || 'conversation_processed' }}\\\",\\n  \\\"result\\\": \\\"{{ \\n    $('Parse Analysis').item(0).json.action === 'SCHEDULE' ? \\n      'Perfect! I\\\\'ve scheduled your consultation and you\\\\'ll receive a calendar invitation shortly. A detailed follow-up email has also been sent with next steps. Looking forward to speaking with you!' :\\n    $('Parse Analysis').item(0).json.action === 'EMAIL' ?\\n      'Thank you for your inquiry! I\\\\'ve sent you a detailed email with information about our services. I\\\\'ll follow up personally within 24 hours.' :\\n    $('Parse Analysis').item(0).json.action === 'FOLLOWUP' ?\\n      'I\\\\'ve noted your request for a follow-up call. You\\\\'ll receive an email confirmation, and I\\\\'ll reach out to schedule a convenient time to speak.' :\\n    $('Parse Analysis').item(0).json.action === 'SUPPORT' ?\\n      'I\\\\'ve forwarded your technical question to our support team. You should receive a detailed response via email within a few hours.' :\\n      'Thank you for your interest in KenDev.Co! I\\\\'ve saved your inquiry and will follow up with relevant information via email.'\\n  }}\\\"\\n}",
+        "options": {}
+      },
+      "id": "i9j0k1l2-m3n4-5678-ijkl-901234567890",
+      "name": "VAPI Tool Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "VAPI Webhook": {
+      "main": [
+        [
+          {
+            "node": "Analyze Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Conversation": {
+      "main": [
+        [
+          {
+            "node": "Parse Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Analysis": {
+      "main": [
+        [
+          {
+            "node": "Check if Scheduling",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check if Email Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Scheduling": {
+      "main": [
+        [
+          {
+            "node": "Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord System Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Discord System Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Email Needed": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord System Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Discord System Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord System Notification": {
+      "main": [
+        [
+          {
+            "node": "VAPI Tool Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-06-09T15:30:00.000Z",
+  "updatedAt": "2025-06-09T15:30:00.000Z",
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-06-09T15:30:00.000Z",
+      "updatedAt": "2025-06-09T15:30:00.000Z",
+      "id": "tag_vapi",
+      "name": "VAPI"
+    },
+    {
+      "createdAt": "2025-06-09T15:30:00.000Z", 
+      "updatedAt": "2025-06-09T15:30:00.000Z",
+      "id": "tag_ai",
+      "name": "AI"
+    },
+    {
+      "createdAt": "2025-06-09T15:30:00.000Z",
+      "updatedAt": "2025-06-09T15:30:00.000Z", 
+      "id": "tag_automation",
+      "name": "Automation"
+    }
+  ],
+  "triggerCount": 1,
+  "active": false,
+  "hash": "vapi-ai-processor-workflow-hash",
+  "versionId": "1"
+} 

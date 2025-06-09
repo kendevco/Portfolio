@@ -1,0 +1,544 @@
+
+How To Connect Vapi To N8N AI Agents in 9 Minutes
+
+Jens | AI Agent & Automation Lab
+2.94K subscribers
+
+Subscribe
+
+74
+
+
+Share
+
+Ask
+
+Download
+
+Clip
+
+2,873 views  May 7, 2025  #n8n #nocodetools #AIworkflow
+✅ Work with me: https://cal.com/jens-h/discovery-call
+
+Contact me: jens@nettlio.com
+
+n8n: https://n8n.partnerlinks.io/jenshaak
+Vapi: https://vapi.ai/?aff=jens
+
+In this step-by-step tutorial, I’ll show you exactly how to connect Vapi to your n8n AI agents in just 9 minutes! 🚀 Whether you're building voice AI agents, automating conversations, or powering AI workflows, integrating Vapi with n8n unlocks powerful automation possibilities without writing a single line of code.
+
+Learn how to set up Vapi for voice AI automation, trigger workflows in n8n, and create seamless AI-driven interactions. This is perfect for anyone looking to automate customer support, lead qualification, AI voice assistants, and more using no-code tools.
+
+If you're passionate about n8n automations, AI automations, and building next-level no-code AI agents, this tutorial is for you! I’ll cover API setup, webhook configuration, and tips to optimize your AI agent’s performance inside n8n. Get ready to supercharge your automations with Vapi voice AI and n8n workflows!
+
+Make sure to like, comment, and subscribe for more tutorials on AI automations, n8n integrations, and no-code builds!
+
+#n8n #Vapi #AIautomation #nocode #AIAgents #automationtutorial #voiceautomation #n8nworkflow #n8nautomation #APIintegration #nocodetools #AIworkflow #n8ntutorial #automationbuilder #AIAgent
+
+
+Transcript
+
+
+Search in video
+0:00
+in this video I'll show you how you can
+0:01
+connect Vappy to your Nitan AI agents
+0:03
+and workflows so you can actually call
+0:04
+those using this voice assistant and get
+0:06
+some response back and also have them do
+0:08
+the normal operations inside of the N10
+0:10
+workflow so I'm just going to demo this
+0:12
+quickly with the super simple AI agent
+0:14
+here which is only a job is to get the
+0:16
+weather from a certain place so I'm just
+0:18
+going to click on talk to assistant
+0:20
+right now and we are going to call this
+0:21
+weather tool in N10
+0:27
+hello where would you like to get the
+0:28
+weather from today i would like to get
+0:30
+the weather from Prague today
+0:33
+just a
+0:34
+sec the weather in Prague is currently
+0:37
+clear with a temperature of
+0:38
+approximately
+0:39
+12.7° and a humidity of 49% if you need
+0:43
+more details or weather for another
+0:45
+location just let me know so we're going
+0:48
+to start us off inside of Bappy all you
+0:49
+need to do is go over to the Vapy
+0:51
+website and in here you can just go over
+0:52
+to the open dashboard or click on sign
+0:55
+up and you will be able to sign up to
+0:56
+Vappy once you've done that you will be
+0:58
+in a new account like this and as I said
+1:01
+this is super cheap you get a,000 free
+1:03
+minutes every month using Vappy so
+1:05
+that's super generous of them so I'm
+1:07
+going to start off in a fresh account
+1:09
+here I just made where we have your our
+1:11
+assistants and all we need to do in here
+1:13
+to make these assistants and then make
+1:16
+them actually call the NSM files is
+1:18
+starting with clicking on create
+1:20
+assistant and in here we can just call
+1:22
+this one NSN tutorial there we go we can
+1:27
+use a blank template and we can click on
+1:28
+create assistant now in here what we
+1:31
+need to do you can configure the model
+1:34
+the transcriber the voice the tools the
+1:36
+analysis and the advanced as you can see
+1:38
+you can either click on this or you can
+1:40
+just scroll to the section so we can
+1:42
+just scroll down first of all we have
+1:43
+the model this is something we're going
+1:45
+to set so we're just going to to make
+1:47
+this work with the weather API we can
+1:49
+say that the first message this is what
+1:51
+the AI is going to say when we actually
+1:52
+call it so I just added a really simple
+1:54
+first message saying "Hello where would
+1:56
+you like to get the weather from today?"
+1:57
+And then a really simple system prompt
+1:59
+because this is just a tutorial now it's
+2:00
+connected to N10 saying "You are a
+2:02
+pleasant assistant your job is to find
+2:04
+the weather in the place city area that
+2:06
+you that the user wants uh to find the
+2:08
+to find the weather you use the weather
+2:10
+tool." And as you can see we are now
+2:11
+asking it to use the weather tool to
+2:13
+find the weather in that area so what we
+2:15
+need to do is we need to scroll down or
+2:16
+just click on tool here to scroll down
+2:18
+to the tools section and we are going to
+2:20
+click on the tools and we want to select
+2:23
+a tool but as you see we don't have a
+2:25
+tool because we actually need to create
+2:26
+the weather tool that we just set in the
+2:28
+system prompt so go ahead and click on
+2:30
+the create new tool you will be
+2:33
+redirected to the tools section inside
+2:35
+of app here and we need to click on no
+2:38
+tool or we need to click on create tool
+2:40
+up here and we need to click on the
+2:43
+function and we are going to call this
+2:46
+tool as I said earlier we're going to
+2:48
+call this tool the weather tool and
+2:50
+we're going to give a quick description
+2:52
+here saying call this tool to get the
+2:54
+weather in a certain place and now we're
+2:55
+going to scroll down to the parameter
+2:58
+settings here because we or the
+2:59
+parameters because we are actually going
+3:00
+to add the parameters So just click on
+3:03
+add a property here which is going to be
+3:05
+called the place because this is the
+3:07
+place where we want to actually find the
+3:09
+weather from and then the description is
+3:10
+just going to be this is the place city
+3:12
+area that the weather will be retreat
+3:14
+from this is be going to be a type
+3:16
+string of course then we're just going
+3:17
+to click on apply and once we've done
+3:20
+that we actually need to go ahead and we
+3:21
+can just save this for now we need to go
+3:23
+ahead and find the server settings
+3:25
+server URL because the server URL is
+3:27
+actually going to be the NN web hook
+3:30
+trigger URL which we are going to make
+3:32
+now so we are in a fresh NN portfolio
+3:34
+here and we're just going to click on
+3:36
+add first step and that is of course
+3:37
+going to be the web hook uh step and we
+3:40
+are just going to click on that and we
+3:41
+are going to set this to a post method
+3:44
+first of all then we're going to copy
+3:46
+this test URL for the testing for now
+3:48
+we're going to paste that inside of here
+3:52
+and once we've done that we can actually
+3:53
+go ahead and save again now we're
+3:54
+actually now we actually have set up our
+3:57
+weather tool so we can go ahead and go
+3:59
+back to our assistant here in the end
+4:01
+tutorial and we can already actually
+4:04
+just before we do that we can go ahead
+4:06
+and go to the tools section and we can
+4:08
+add our tool here so you can just click
+4:10
+on the weather tool so now it has the
+4:12
+weather tool and we can publish this
+4:13
+agent or this assistant and now we can
+4:16
+actually go ahead and talk to the
+4:17
+assistant but before we do that we need
+4:19
+to actually go ahead and we need to test
+4:22
+this or listen for test events because
+4:24
+now we want to trigger this weather tool
+4:26
+so let's go back to Vappy and we can
+4:28
+talk to the assistant
+4:34
+hello where would you like to get the
+4:36
+weather from today i would like to get
+4:38
+the weather from Prague today
+4:41
+one
+4:42
+moment i apologize but uh it seems There
+4:45
+you go as you can see we now got the web
+4:46
+hookup triggered so we can see what we
+4:48
+got from that web as you can see we got
+4:50
+the place prog here which is what we're
+4:52
+going to do we're going to use h in the
+4:55
+later parts in this workflow so we're
+4:57
+just going to use a simple AI agent here
+4:59
+so you can just click on AI agent and we
+5:01
+are just going to not be using connected
+5:03
+chat trigger we're going to use define
+5:05
+below and in here we are just going to
+5:08
+add or first of all we're just going to
+5:09
+say find the weather for and we can
+5:12
+scroll down to the body and the tool
+5:14
+call so we can find the place which is
+5:17
+going to be Prague we can put that in
+5:19
+find the weather for Prague and now what
+5:22
+we need to do is we need to just go
+5:24
+ahead and we can add a tool here which
+5:26
+is obviously going to be the open
+5:27
+weather API so you can just search for
+5:29
+open weather
+5:31
+API open weather there we go open
+5:34
+weather map tool and we can go ahead and
+5:37
+if you don't have an open weather
+5:38
+account you can just go ahead and use
+5:39
+that or you can do something else with
+5:41
+this AI agent if you don't want to
+5:42
+create one just let the AI found uh
+5:45
+define the city because that is then
+5:46
+going to go ahead and define that city
+5:49
+which came from the web hook and we're
+5:50
+just going to use a simple open AI chat
+5:53
+here for the AI agent which is going to
+5:55
+be TP4 is fine for testing and we are
+5:58
+just going to add a little web hook
+6:01
+response here respond to web hook and
+6:04
+now we're going to let this be as first
+6:06
+incoming item but in this web hook right
+6:08
+now we actually need to change this from
+6:10
+respond to using respond to webbook node
+6:14
+and once we've done that uh we are going
+6:16
+to get a little error and I'm going to
+6:18
+just trigger that for now and we can see
+6:20
+what what happens so we just need to
+6:22
+click on test workflow here come back
+6:23
+over to the vapid dashboard click on
+6:26
+test or talk to assistant hello where
+6:29
+would you like to get the weather from
+6:30
+today i would like to get the weather
+6:32
+from Prague today
+6:34
+uh give me a moment
+6:39
+it seems there was an issue retrieving
+6:41
+the weather information for as you can
+6:43
+hear it was an issue retrieving the
+6:45
+weather information the reason is as you
+6:46
+can see we actually managed to send back
+6:48
+the response here which was something
+6:50
+looking like this first of all this is
+6:52
+not something we can send back to vap so
+6:54
+we need to clean that up secondly we
+6:57
+also actually need to send a response to
+7:00
+vap in a certain format so the VA uh
+7:03
+documentation here is looking really
+7:05
+weird for some reason they have some
+7:07
+HTML issues here but we actually need to
+7:09
+go over to the custom tools section so
+7:12
+we just need to scroll down to this part
+7:15
+here once you click on the custom tools
+7:17
+inside of the vapid documentation scroll
+7:19
+down to this part hopefully when you are
+7:21
+seeing this video you don't have to deal
+7:22
+with this uh freaking HTML issue here
+7:25
+but you can just copy this little JSON
+7:27
+right here head back over to your annot
+7:31
+workflow here and you can go ahead and
+7:33
+change this from first incoming item to
+7:35
+JSON and we just need to paste that in
+7:37
+here and now the tool call ID is going
+7:41
+to be so this is the format that mapping
+7:43
+needs to actually use the result that we
+7:45
+got from the the AI agent here so first
+7:48
+of all we need to change this uh change
+7:50
+it to expression and we need to go ahead
+7:52
+and add the tool call ID which is going
+7:55
+to be from as you can see the we had the
+7:58
+tool calls here and the tool call at
+8:00
+index zero grab that ID drag it over
+8:03
+here and for the result we're obviously
+8:05
+going to use the result we got from the
+8:08
+AI agent but the the thing is we cannot
+8:11
+use this um this markdown format with
+8:14
+these back slash ends so we actually are
+8:17
+going to go ahead and ask the AI agent
+8:19
+to make this a bit more simple so we
+8:21
+just told it only output one sentence no
+8:24
+new lines so now we can go ahead and
+8:26
+actually uh save this and we can test
+8:28
+this workflow again so we can click on
+8:29
+test workflow we can go back over to our
+8:31
+Vapid dashboard and we can talk to the
+8:33
+assistant again
+8:37
+hello where would you like to get the
+8:38
+weather from today i would like to get
+8:40
+the weather from Prague today
+8:43
+hold on a sec
+8:46
+the weather in Prague is clear with a
+8:48
+temperature of 14.89 D-C and a humidity
+8:51
+of
+8:53
+42% all right so there you go that's how
+8:56
+you connect to NSN using Vappy if you
+8:59
+enjoyed the video please make sure to
+9:00
+subscribe and I'll see you in the next
