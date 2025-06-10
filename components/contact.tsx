@@ -14,16 +14,10 @@ import SessionManager from "@/lib/session-manager";
 export default function Contact() {
   const { ref } = useSectionInView("Contact");
 
-  const [encodedEmail, setEncodedEmail] = useState("");
   const [senderName, setSenderName] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
 
   useEffect(() => {
-    const email = "kenneth.courtney@gmail.com";
-    const encoded = Array.from(email)
-      .map((char) => `&#${char.charCodeAt(0)};`)
-      .join("");
-    setEncodedEmail(encoded);
 
     // Track that user is on contact page
     SessionManager.trackPageVisit('/contact', {
@@ -63,7 +57,7 @@ export default function Contact() {
 
       <ContentBlock 
         contentKey="contact-description" 
-        defaultContent={`Please contact me directly at ${encodedEmail} or through this form.`}
+        defaultContent="Please contact me directly at kenneth.courtney@gmail.com or through this form."
         className="text-gray-700 -mt-6 dark:text-white/80"
       />
 
