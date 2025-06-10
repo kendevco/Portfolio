@@ -2,14 +2,22 @@
 
 import { Resend } from "resend";
 import { validateString, getErrorMessage } from "@/lib/utils";
+import { discordantClient } from "@/lib/discordant-client";
+import { headers } from "next/headers";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (formData: FormData) => {
+  const senderName = formData.get("senderName");
   const senderEmail = formData.get("senderEmail");
   const message = formData.get("message");
 
   // simple server-side validation
+  if (!validateString(senderName, 100)) {
+    return {
+      error: "Invalid sender name",
+    };
+  }
   if (!validateString(senderEmail, 500)) {
     return {
       error: "Invalid sender email",
@@ -22,7 +30,29 @@ export const sendEmail = async (formData: FormData) => {
   }
 
   let data;
+  let discordantResponse;
+  
   try {
+    // Get request headers for additional context
+    const headersList = await headers();
+    const userAgent = headersList.get('user-agent') || '';
+    const referer = headersList.get('referer') || '';
+
+    // Send to Discordant first (this triggers n8n workflow)
+    try {
+      discordantResponse = await discordantClient.sendContactFormMessage({
+        name: senderName as string,
+        email: senderEmail as string,
+        message: message as string,
+        page: '/contact',
+        sessionId: `contact-${Date.now()}`, // In production, this would come from session management
+        userAgent
+      });
+    } catch (discordantError) {
+      console.error('Failed to send to Discordant:', discordantError);
+      // Continue with email even if Discordant fails
+    }
+
     // Using simple HTML instead of React Email components for Next.js 15 compatibility
     const htmlContent = `
       <!DOCTYPE html>
@@ -43,11 +73,12 @@ export const sendEmail = async (formData: FormData) => {
             <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
             
             <p style="font-size: 14px; color: #666;">
-              <strong>Sender's Email:</strong> ${senderEmail}
+              <strong>From:</strong> ${senderName} (${senderEmail})
             </p>
             
             <p style="font-size: 12px; color: #999; margin-top: 30px;">
               This message was sent from your portfolio website contact form.
+              ${discordantResponse ? 'Also forwarded to Discordant for AI processing.' : 'Note: Discordant integration unavailable.'}
             </p>
           </div>
         </body>
@@ -57,7 +88,7 @@ export const sendEmail = async (formData: FormData) => {
     data = await resend.emails.send({
       from: "Portfolio Contact <noreply@kendev.co>",
       to: process.env.EMAIL_ADDRESS_TO ?? "",
-      subject: "New Portfolio Contact Form Message",
+      subject: `New Portfolio Contact: ${senderName}`,
       replyTo: senderEmail as string,
       html: htmlContent,
     });
@@ -69,5 +100,6 @@ export const sendEmail = async (formData: FormData) => {
 
   return {
     data,
+    discordantResponse,
   };
 };

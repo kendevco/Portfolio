@@ -110,3 +110,112 @@ model Project {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
+
+model Skill {
+  id          String    @id @default(cuid()) @map("_id")
+  name        String
+  category    String
+  level       Int       // 1-100
+  icon        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+}
+
+enum ContentType {
+  HERO_TITLE
+  HERO_SUBTITLE
+  HERO_DESCRIPTION
+  ABOUT_TITLE
+  ABOUT_CONTENT
+  PROJECTS_TITLE
+  PROJECTS_DESCRIPTION
+  SKILLS_TITLE
+  SKILLS_DESCRIPTION
+  EXPERIENCE_TITLE
+  EXPERIENCE_DESCRIPTION
+  CONTACT_TITLE
+  CONTACT_DESCRIPTION
+  CONTACT_EMAIL
+  FOOTER_TEXT
+  NAVIGATION_CTA
+  MICROPHONE_TITLE
+  MICROPHONE_DESCRIPTION
+  CUSTOM
+}
+
+model Content {
+  id          String      @id @default(cuid()) @map("_id")
+  key         String      @unique
+  type        ContentType
+  title       String
+  content     String
+  isPublished Boolean     @default(true)
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([type])
+}
+
+model DiscordantIntegration {
+  id                String   @id @default(cuid()) @map("_id")
+  discordantBaseUrl String
+  apiToken          String
+  serverId          String?
+  serverName        String?
+  channelId         String?
+  channelName       String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model WebsiteVisitor {
+  id              String    @id @default(cuid()) @map("_id")
+  sessionId       String    @unique
+  discordantUserId String?
+  name            String?
+  email           String?
+  ipAddress       String?
+  userAgent       String?
+  isActive        Boolean   @default(true)
+  lastSeen        DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  messages        ChatMessage[]
+}
+
+model ChatMessage {
+  id                String         @id @default(cuid()) @map("_id")
+  content           String
+  fileUrl           String?
+  websiteVisitorId  String
+  visitor           WebsiteVisitor @relation(fields: [websiteVisitorId], references: [id], onDelete: Cascade)
+  discordantMessageId String?
+  n8nWorkflowId     String?
+  n8nExecutionId    String?
+  isFromAI          Boolean        @default(false)
+  metadata          Json?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([websiteVisitorId])
+  @@index([createdAt])
+}
+
+model VapiEvent {
+  id        String   @id @default(cuid()) @map("_id")
+  type      String
+  data      String
+  timestamp DateTime
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([processed])
+  @@index([timestamp])
+}

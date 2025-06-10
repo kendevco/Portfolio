@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { 
   LayoutDashboard, 
   FolderOpen, 
@@ -11,8 +12,15 @@ import {
   Settings,
   MessageSquare,
   Database,
-  ExternalLink
+  ExternalLink,
+  Mic,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Star
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const routes = [
   {
@@ -20,6 +28,12 @@ const routes = [
     icon: LayoutDashboard,
     href: "/admin",
     color: "text-sky-500"
+  },
+  {
+    label: "Content",
+    icon: MessageSquare,
+    href: "/admin/content",
+    color: "text-emerald-500"
   },
   {
     label: "Experiences",
@@ -34,16 +48,28 @@ const routes = [
     color: "text-pink-700"
   },
   {
+    label: "Skills",
+    icon: Star,
+    href: "/admin/skills",
+    color: "text-purple-600"
+  },
+  {
     label: "Profiles",
     icon: Users,
     href: "/admin/profiles",
     color: "text-orange-700"
   },
   {
-    label: "Discord Integration",
+    label: "Discord",
     icon: MessageSquare,
     href: "/admin/discord",
     color: "text-green-700"
+  },
+  {
+    label: "Vapi AI",
+    icon: Mic,
+    href: "/admin/vapi",
+    color: "text-red-700"
   },
   {
     label: "Database",
@@ -59,44 +85,97 @@ const routes = [
   },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  isCollapsed?: boolean;
+  onToggle?: () => void;
+}
+
+export function AdminSidebar({ isCollapsed = false, onToggle }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
-      <div className="px-3 py-2 flex-1">
-        <Link href="/admin" className="flex items-center pl-3 mb-14">
-          <h1 className="text-2xl font-bold">
-            Portfolio Admin
-          </h1>
-        </Link>
+    <div className={cn(
+      "relative flex flex-col h-full bg-[#111827] text-white transition-all duration-300 ease-in-out",
+      isCollapsed ? "w-16" : "w-72"
+    )}>
+      {/* Header with toggle button */}
+      <div className="flex items-center justify-between p-4 border-b border-white/10">
+        {!isCollapsed && (
+          <Link href="/admin" className="flex items-center">
+            <h1 className="text-xl font-bold truncate">
+              Portfolio Admin
+            </h1>
+          </Link>
+        )}
+        
+        {onToggle && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggle}
+            className="text-white hover:bg-white/10 p-2"
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex-1 py-4 px-3">
         <div className="space-y-1">
           {routes.map((route) => (
             <Link
               key={route.href}
               href={route.href}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                "group flex items-center w-full font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200",
                 pathname === route.href ? "text-white bg-white/10" : "text-zinc-400",
+                isCollapsed ? "justify-center p-3" : "justify-start p-3"
               )}
+              title={isCollapsed ? route.label : undefined}
             >
-              <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                {route.label}
-              </div>
+              <route.icon className={cn("h-5 w-5 flex-shrink-0", route.color)} />
+              {!isCollapsed && (
+                <span className="ml-3 text-sm truncate transition-all duration-200">
+                  {route.label}
+                </span>
+              )}
             </Link>
           ))}
         </div>
       </div>
-      <div className="px-3 py-2 border-t border-white/10">
+
+      {/* Footer */}
+      <div className="p-3 border-t border-white/10">
         <Link
           href="/"
-          className="text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition text-zinc-400"
+          className={cn(
+            "group flex items-center w-full font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 text-zinc-400",
+            isCollapsed ? "justify-center p-3" : "justify-start p-3"
+          )}
+          title={isCollapsed ? "View Portfolio" : undefined}
         >
-          <ExternalLink className="h-5 w-5 mr-3 text-green-500" />
-          View Portfolio
+          <ExternalLink className="h-5 w-5 text-green-500 flex-shrink-0" />
+          {!isCollapsed && (
+            <span className="ml-3 text-sm truncate transition-all duration-200">
+              View Portfolio
+            </span>
+          )}
         </Link>
       </div>
+
+      {/* Mobile overlay toggle */}
+      {!isCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onToggle}
+        />
+      )}
     </div>
   );
 } 

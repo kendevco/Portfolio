@@ -3,9 +3,12 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import ActiveSectionContextProvider from "@/context/active-section-context";
 import Footer from "@/components/footer";
-import ThemeSwitch from "@/components/theme-switch";
+import UIControls from "@/components/ui-controls";
 import ThemeContextProvider from "@/context/theme-context";
 import { Toaster } from "react-hot-toast";
+import { Toaster as SonnerToaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
+import DiscordantChatWidget from "@/components/discordant-chat-widget";
 
 import { ClerkProvider } from '@clerk/nextjs' 
 
@@ -36,7 +39,10 @@ export default function RootLayout({
             {children}
             <Footer />
             <Toaster position="top-right" />
-            <ThemeSwitch />
+            <SonnerToaster position="top-right" />
+            <UIControls />
+            <DiscordantChatWidget />
+            <Analytics />
           </ActiveSectionContextProvider>
         </ThemeContextProvider>
       </body>
